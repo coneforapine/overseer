@@ -1,7 +1,7 @@
 [package]
 name = "overseer"
 version = "0.1.0"
-authors = ["pinecone"]
+authors = ["coneforapine"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,7 +10,7 @@ edition = "2018"
 serenity = { version = "0.10.4", features = ["framework", "standard_framework", "rustls_backend"] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 dotenv = "0.15.0"
-config = "0.10.1"
+config = "0.11.0"
 serde = { version = "1.0.124", features = ["derive"] }
 eyre = "0.6.5"
 color-eyre = "0.5.10"
