@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS public.guild_settings (
 -- moderator commands
 CREATE TYPE case_types AS ENUM ('ban', 'warn', 'kick');
 
-
 CREATE TABLE public.cases (
     id uuid DEFAULT uuid_generate_v4(),
     user_id varchar(30) NOT NULL,

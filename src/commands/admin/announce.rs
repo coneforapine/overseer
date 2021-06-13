@@ -21,6 +21,7 @@ use crate::database::models::GuildSettings;
 #[sub_commands(set_channel)]
 #[only_in(guilds)]
 #[min_args(1)]
+#[required_permissions(ADMINISTRATOR)]
 #[usage("announce <message>")]
 pub async fn announce(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
     let data = ctx.data.read().await;
@@ -48,6 +49,7 @@ pub async fn announce(ctx: &Context, msg: &Message, _args: Args) -> CommandResul
 #[command("set")]
 #[only_in(guilds)]
 #[max_args(1)]
+#[required_permissions(ADMINISTRATOR)]
 #[usage("announce set <channel>")]
 pub async fn set_channel(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
@@ -55,7 +57,6 @@ pub async fn set_channel(ctx: &Context, msg: &Message, mut args: Args) -> Comman
         msg.channel_id.say(&ctx.http,"What channel? I don't see anything").await?;
         return Ok(())
     }
-
 
     let data = ctx.data.read().await;
     let pool = data.get::<ConnectionPool>().unwrap();

@@ -20,3 +20,4 @@ tracing-log = { version = "0.1.2", features = ["env_logger"] }
 tracing-subscriber = "0.2.17"
 sqlx = { version = "0.5.1", features = [ "runtime-tokio-rustls", "postgres", "uuid",  ] }
 regex = "1.4.5"
+dashmap = "4.0.2"
