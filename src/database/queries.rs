@@ -35,22 +35,17 @@ impl GuildSettings {
 }
 
 impl Case {
+    // Returns case number
+    pub async fn insert_new(user_id: String, mod_id: String, case_type: CaseType, reason: String, pool: &Pool<Postgres>) -> anyhow::Result<i32> {
+        let rec = sqlx::query!(r#"
+            INSERT INTO cases(user_id, moderator_id, reason, case_type)
+                VALUES($1, $2, $3, $4)
+                 RETURNING number;
+        "#,
+        user_id, mod_id, reason, case_type as CaseType
+        ).fetch_one(pool).await?;
 
-    pub async fn insert_new(user_id: String, mod_id: String, case_type: Option<CaseType>, reason: Option<String>, pool: &Pool<Postgres>) -> Result<PgQueryResult, Error> {
+        Ok(rec.number)
 
-        if let Some(re) = reason {
-            sqlx::query!("\
-                INSERT INTO cases(user_id, moderator_id, case_type, reason)\
-                    VALUES($1, $2, $3, $4);
-            ",
-            user_id, mod_id, case_type as Option<CaseType>, re
-            ).execute(pool).await
-        } else {
-            sqlx::query!(
-            "INSERT INTO cases(user_id, moderator_id, case_type) VALUES ($1, $2, $3);",
-            user_id, mod_id, case_type as Option<CaseType>
-            ).execute(pool).await
-        }
     }
-
 }

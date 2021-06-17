@@ -16,6 +16,7 @@ use crate::{
     utils::parse_chan
 };
 use crate::database::models::GuildSettings;
+use serenity::model::id::ChannelId;
 
 #[command]
 #[sub_commands(set_channel)]
@@ -23,7 +24,7 @@ use crate::database::models::GuildSettings;
 #[min_args(1)]
 #[required_permissions(ADMINISTRATOR)]
 #[usage("announce <message>")]
-pub async fn announce(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
+pub async fn announce(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
     let data = ctx.data.read().await;
     let pool = data.get::<ConnectionPool>().unwrap();
 
@@ -31,17 +32,8 @@ pub async fn announce(ctx: &Context, msg: &Message, _args: Args) -> CommandResul
     let guild_settings = models::GuildSettings::fetch_one(guild_id.to_string(), pool).await.unwrap();
 
     if let Some(ac) = guild_settings.announcement_channel {
-        let ac = ac.parse::<u64>().unwrap();
-        let c = guild_id.channels(&ctx.http).await?;
-        let c = c.values().find(|c| c.id == ac);
-
-        if let Some(channel) = c {
-            channel.say(&ctx.http, &_args.message()).await?;
-        } else {
-            msg.channel_id.say(&ctx.http, "Announcement channel might be deleted or inaccesable").await?;
-            return Ok(())
-        }
-
+        let channel = ChannelId(ac.parse::<u64>().unwrap());
+        channel.say(&ctx.http, &args.message()).await?;
     }
     Ok(())
 }

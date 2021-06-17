@@ -18,6 +18,7 @@ CREATE TABLE public.cases (
     user_id varchar(30) NOT NULL,
     moderator_id varchar(30) NOT NULL,
     reason text NULL,
-    case_type case_types NOT NULL
+    case_type case_types NOT NULL,
+    number SERIAL,
     CONSTRAINT cases_pkey PRIMARY KEY (id)
 )

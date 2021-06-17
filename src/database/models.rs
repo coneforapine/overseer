@@ -23,5 +23,6 @@ pub struct Case {
     pub user_id: String,
     pub moderator_id: String,
     pub case_type: CaseType,
+    pub number: u128,
     pub reason: Option<String>
 }
