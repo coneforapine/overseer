@@ -8,7 +8,6 @@ use serenity::{
     prelude::Context
 };
 
-use tracing::{info, warn};
 use eyre::anyhow;
 
 use crate::{

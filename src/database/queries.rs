@@ -46,6 +46,15 @@ impl Case {
         ).fetch_one(pool).await?;
 
         Ok(rec.number)
-
     }
+
+    pub async fn get_from_case_number(case_number: i32, pool: &Pool<Postgres>) -> Option<Case> {
+        sqlx::query_as!(Case, r#"
+            SELECT id, user_id, moderator_id, reason, "number", case_type as "case_type: _"
+            FROM cases
+            WHERE "number"=$1;
+        "#, case_number).fetch_optional(pool).await
+    }
+
+
 }

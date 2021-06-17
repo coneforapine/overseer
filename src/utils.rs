@@ -3,6 +3,7 @@ use serenity::{
     prelude::*,
     utils::{parse_channel},
 };
+use crate::database::models::CaseType;
 
 // A more detailed channel parsing function
 // Priority of parsing:
@@ -55,4 +56,12 @@ pub async fn parse_chan(
     }
 
     None
+}
+
+pub fn match_case_enum(case_type: CaseType) -> String {
+    match case_type {
+        CaseType::Warn => String::from("Warning"),
+        CaseType::Ban => String::from("Ban"),
+        CaseType::Kick => String::from("Kick")
+    }
 }
