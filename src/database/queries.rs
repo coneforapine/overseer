@@ -53,8 +53,14 @@ impl Case {
             SELECT id, user_id, moderator_id, reason, "number", case_type as "case_type: _"
             FROM cases
             WHERE "number"=$1;
-        "#, case_number).fetch_optional(pool).await
+        "#, case_number).fetch_optional(pool).await.ok()?
     }
 
+    pub async fn update_reason(case_number: i32, reason: String, pool: &Pool<Postgres>) -> Result<PgQueryResult, Error> {
+        sqlx::query!(r#"
+            UPDATE cases SET reason=$1
+            WHERE "number"=$2;
+        "#, reason, case_number).execute(pool).await
+    }
 
 }
