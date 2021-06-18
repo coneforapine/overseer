@@ -20,7 +20,7 @@ use crate::utils::match_case_enum;
 #[usage("case")]
 #[only_in(guild)]
 #[required_permissions(ADMINISTRATOR)]
-pub async fn case(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+pub async fn case(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     let data = ctx.data.read().await;
     let pool = data.get::<ConnectionPool>().unwrap();
 
@@ -28,22 +28,24 @@ pub async fn case(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
         msg.channel_id.say(&ctx.http, "And the Pinecone said let there be case number").await?;
     }
 
-    let case_number = args.current().unwrap().parse::<i32>().unwrap();
+    if let Some(case_number) = args.single::<i32>().ok() {
+        if let Some(case) = Case::get_from_case_number(case_number, pool).await {
+            let acted_user = UserId(case.user_id.parse::<u64>().unwrap()).to_user(&ctx.http).await?;
+            let moderator = UserId(case.moderator_id.parse::<u64>().unwrap()).to_user(&ctx.http).await?;
 
-    if let Some(case) = Case::get_from_case_number(case_number, pool).await {
-        let acted_user = UserId(case.user_id.parse::<u64>().unwrap()).to_user(&ctx.http).await?;
-        let moderator = UserId(case.moderator_id.parse::<u64>().unwrap()).to_user(&ctx.http).await?;
-
-        msg.channel_id.send_message(&ctx.http, |m| {
+            msg.channel_id.send_message(&ctx.http, |m| {
             m.embed(|e| {
                 e.title(format!("The case of {}#{} | CASE #{}", acted_user.name, acted_user.discriminator, case_number))
                     .field("Reason", case.reason.unwrap(), true)
                     .field("Moderator", format!("<@{}>", moderator.id) , true)
                     .field("Action type", match_case_enum(case.case_type), true)
-            })
-        }).await?;
+                })
+            }).await?;
+        } else {
+            msg.channel_id.say(&ctx.http, "There is no case with that number. Are u sure?").await?;
+        }
     } else {
-        msg.channel_id.say(&ctx.http, "There is no case with that number. Are u sure?").await?;
+        msg.channel_id.say(&ctx.http, "I need a case to see.").await?;
     }
 
     Ok(())
